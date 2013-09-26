@@ -1,3 +1,6 @@
+##This scraper is based on the code from Coursera's Intro to Data Science
+#https://www.coursera.org/course/datasci
+
 import urllib2 as urllib
 import oauth2 as oauth
 
