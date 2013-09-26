@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+        <meta charset="utf-8">
+
+        <meta name="viewport" http-equiv="Content-Type" content="initial-scale=1.0, user-scalable=no" />
+        <title id='title'>On Geary</title>
+
+        <script src="/static/jquery.js"></script>
+        <script>
+
+            addCrossStreets = function() {
+
+                var streets = [{name: "Van Ness", longitude: -122.412357}, {name:"Fillmore", longitude: -122.421469}, {name: "Divisadero", longitude: -122.439516}, {name: "35th Avenue", longitude: -122.495451}];   
+
+                for (var i = 0; streets.length > i; i++) {
+                    var crossStreet = streets[i];
+
+                    var div = $(document.createElement("div"));
+
+                    div.addClass("cross-street");
+                    div.css("right", ((-122.43 - crossStreet["longitude"]) * 30000).toString()+"px");
+                    div.html(crossStreet["name"]);
+
+                    $("#container").append(div);
+                }
+            };
+
+
+                var xhr = new XMLHttpRequest();
+                
+                xhr.onload = function() {
+                    addCrossStreets();  
+
+                    var parsedResponse = JSON.parse(this.responseText);
+                    for (var i = 0; i < parsedResponse.length; i++) {
+                        var tweet = parsedResponse[i];
+                        var div =  $(document.createElement("div"));
+
+                        div.addClass("tweet");
+                        div.css("right", ((-122.43 - tweet['longitude']) * 30000).toString()+"px");
+                        div.css("top", ((37.78835088 - tweet['latitude']) * 30000).toString()+"px");
+
+                        $("#container").append(div);
+                }
+            
+
+            };    
+
+            xhr.open('GET', '/generate', true);
+            xhr.send(); 
+
+
+/*            $(document).ready(function(){
+                console.log("gettin' ready!");
+                $("div.tweet").mouseover(function() {
+                    $(this).text("We be tweetin'!");
+                    //on mouseover, show the tweet from the database!
+                }).mouseout(function(){
+                    $(this).text("");
+                });*/
+
+
+
+      /*          var streets = ["35th Ave", "Divisadero", "Fillmore", "Van Ness"]
+
+                for (var i = 0; streets.length > i; i++) {
+                    var div =  $(document.createElement("div"));
+                    
+                    div.addClass("cross-street");
+                    div.css("left", ((i+1) * 650).toString()+"px");
+                    div.html(streets[i]);
+
+                    $("#container").append(div);
+                }
+
+            });     */
+
+            //for each street,
+            //create a new div with class="cross-street"
+            //and set the right property based on longitude
+
+            //This is a dictionary with the streets and their longitude.
+
+
+
+
+
+
+
+        </script>
+    </head>
+
+    <body>
+
+        <h1>On Geary</h1>
+        <h2>Drivin' a bus down Geary Street. Hey!</H2>
+        <div id="container" style="width:3000px;height:400px;">
+
+            <div id="geary"> 
+            </div>
+
+
+
+            <div class="landmark">
+            </div>
+
+            <div class="bus-shelter">
+            </div>
+        </div>
+
+<br />
+<br />
+<br />
+
+    </body>
+
+</html>

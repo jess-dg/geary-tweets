@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" http-equiv="Content-Type" content="initial-scale=1.0, user-scalable=no" />
+        <title id='title'>Geary Tweets</title>
+
+        <style type="html/css">
+
+            html { height: 100% }
+            body { height: 100%; margin: 0; padding: 0 }
+            #map-canvas {height: 100% }
+
+        </style>
+
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAp4tN-lSHwX_6TIDME0Ev5JciDKlenxy0&amp;sensor=false">
+        </script>
+
+        <script type="text/javascript">
+
+            var map;
+            var currentInfoWindow;
+
+            function initialize() {
+              var gearyStreet = new google.maps.LatLng(37.78313,-122.456055);
+              var mapOptions = {
+                zoom: 13,
+                center: gearyStreet,
+                disableDefaultUI: true,
+                disableDoubleClickZoom: false,
+                mapTypeId: google.maps.MapTypeId.ROADMAP};
+
+                map =  new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/generate', true);
+                xhr.onload = function() {
+                    var parsedResponse = JSON.parse(this.responseText);
+                    for (var i = 0; i < parsedResponse.length; i++) {
+                        var tweet = parsedResponse[i];
+                        addMarker(tweet["latLong"],tweet["title"]);
+                    }
+                };
+                xhr.send();
+            }
+
+            function addMarker(location, text) {
+                var latlng = new google.maps.LatLng(location[0],location[1]);
+                var marker = new google.maps.Marker({position: latlng, map: map, icon: {url: '/static/happy_smiley_face.png'}});
+                //, fillColor: 'purple', fillOpacity: 100, strokeColor: 'purple', path:google.maps.SymbolPath.CIRCLE, scale: 3
+                var myInfoWindow = new google.maps.InfoWindow({"content":text, position:latlng});
+                google.maps.event.addListener(marker, 'mouseover', function(event) {
+                    if (currentInfoWindow !== undefined) {
+                        currentInfoWindow.close(map);};
+                    myInfoWindow.open(map);
+                    currentInfoWindow = myInfoWindow;
+              });
+            }
+    </script>
+
+    </head>
+
+    <body onload="initialize()">
+        <h1>Geary Tweets</h1>
+        <h2>Tweets appear from the Richmond to Market, West to East.</H2>
+
+        <div id="map-canvas" style="width:1200px;height:400px;">
+ 
+        </div>
+
+        <div> 
+            {% for tweet in tweets %}
+                <ul>
+                    <li>{{ tweet.tweet_text }} was tweeted at {{ tweet.latitude }}, {{tweet.longitude}}</li>
+                </ul>
+            {% endfor %}
+        </div>
+    </body>
+
+</html>
