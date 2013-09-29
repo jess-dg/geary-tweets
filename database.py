@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, relationship, backref
 from email.utils import parsedate_tz
 from datetime import datetime, timedelta
 
-engine = create_engine('sqlite:////Users/jessicadegeorge/desktop/projects/geary_tweets/tweet_db.sqlite', echo=True)
+engine = create_engine('sqlite:////Users/jessicadegeorge/desktop/projects/geary-tweets/tweet_db.sqlite', echo=True)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()

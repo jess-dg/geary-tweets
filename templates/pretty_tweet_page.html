@@ -10,6 +10,9 @@
         <script src="/static/jquery.js"></script>
         <script>
 
+            var vertScale = 30000
+            var horizScale = 75000
+
             addCrossStreets = function() {
 
                 var streets = [{name: "Van Ness", longitude: -122.412357}, {name:"Fillmore", longitude: -122.421469}, {name: "Divisadero", longitude: -122.439516}, {name: "35th Avenue", longitude: -122.495451}];   
@@ -20,7 +23,7 @@
                     var div = $(document.createElement("div"));
 
                     div.addClass("cross-street");
-                    div.css("right", ((-122.43 - crossStreet["longitude"]) * 30000).toString()+"px");
+                    div.css("right", ((-122.511107 - crossStreet["longitude"]) * horizScale).toString()+"px");
                     div.html(crossStreet["name"]);
 
                     $("#container").append(div);
@@ -31,25 +34,46 @@
                 var xhr = new XMLHttpRequest();
                 
                 xhr.onload = function() {
-                    addCrossStreets();  
+                    addCrossStreets(); 
 
                     var parsedResponse = JSON.parse(this.responseText);
                     for (var i = 0; i < parsedResponse.length; i++) {
-                        var tweet = parsedResponse[i];
+                        var streetObject = parsedResponse[i];
                         var div =  $(document.createElement("div"));
 
-                        div.addClass("tweet");
-                        div.css("right", ((-122.43 - tweet['longitude']) * 30000).toString()+"px");
-                        div.css("top", ((37.78835088 - tweet['latitude']) * 30000).toString()+"px");
+                        if (streetObject["type"] == "Tweet") {
+                            div.addClass("tweet");
+
+                        } else if (streetObject["type"] == "Landmark") { 
+                            div.addClass("landmark");
+                        }      
+
+                        div.css("right", ((-122.511107 - streetObject['longitude']) * horizScale).toString()+"px");
+                        div.css("top", ((37.7884 - streetObject['latitude']) * vertScale).toString()+"px");         
 
                         $("#container").append(div);
-                }
-            
+                    }
+                };
 
-            };    
+
+
+                //     var parsedResponseLandmark = JSON.parse(this.responseText);
+                //     for (var i = 0; i < parsedResponseLandmark.length; i++) {
+                //         var landmark = parsedResponseLandmark[i];
+                //         var div = $(document.createElement("div"));
+
+                //         div.addClass("landmark");
+                //         div.css("right", ((-122.43 - landmark['longitude']) * 30000).toString()+"px");
+                //         div.css("top", ((37.78835088 - landmark['latitude']) * 30000).toString()+"px");
+
+                //         $("#container").append(div);
+                //     }         
+
+                 //};    
 
             xhr.open('GET', '/generate', true);
-            xhr.send(); 
+//            xhr.open('GET', '/landmarks', true);
+            xhr.send();
 
 
 /*            $(document).ready(function(){
@@ -77,17 +101,6 @@
 
             });     */
 
-            //for each street,
-            //create a new div with class="cross-street"
-            //and set the right property based on longitude
-
-            //This is a dictionary with the streets and their longitude.
-
-
-
-
-
-
 
         </script>
     </head>
@@ -101,10 +114,6 @@
             <div id="geary"> 
             </div>
 
-
-
-            <div class="landmark">
-            </div>
 
             <div class="bus-shelter">
             </div>

@@ -13,27 +13,37 @@ def index():
 @app.route('/generate')
 def create_json():
 	tweets = session.query(Tweet).filter((Tweet.latitude.between(37.77713,37.78913)),(Tweet.longitude.between(-122.51030,-122.40181))).order_by(Tweet.longitude.asc())
-	tweet_dicts = []
+	landmarks = session.query(Landmark)
+	dicts = []
 	for tweet in tweets:
-		tweet_dicts.append({'title': tweet.tweet_text,
+		dicts.append({'type': 'Tweet',
+							'title': [tweet.tweet_text],
 							'latLong': [tweet.latitude, tweet.longitude], 
 							'longitude': [tweet.longitude], 
-							'latitude': [tweet.latitude]})
+							'latitude': [tweet.latitude]});
 
-	return dumps(tweet_dicts)
-
-@app.route('/landmarks')
-def create_json():
-	landmarks = session.query(Landmark)
-	landmark_dicts = []
 	for landmark in landmarks:
-		landmark_dicts.append({'name': [landmark.name], 
-								'sideOfStreet': [landmark.side_of_street], 
-								'latLong': [landmark.latitude, landmark.longitude], 
-								'longitude': [landmark.longitude], 
-								'latitude': [landmark.latitude]})
+		dicts.append({'type': 'Landmark',
+						'name': [landmark.name], 
+ 						'sideOfStreet': [landmark.side_of_street], 
+ 						'latLong': [landmark.latitude, landmark.longitude], 
+ 						'longitude': [landmark.longitude], 
+						'latitude': [landmark.latitude]});
 
-	return dumps(landmark_dicts)
+ 	return dumps(dicts)
+
+# @app.route('/landmarks')
+# def create_json_lm():
+# 	landmarks = session.query(Landmark)
+# 	landmark_dicts = []
+# 	for landmark in landmarks:
+# 		landmark_dicts.append({'name': [landmark.name], 
+# 								'sideOfStreet': [landmark.side_of_street], 
+# 								'latLong': [landmark.latitude, landmark.longitude], 
+# 								'longitude': [landmark.longitude], 
+# 								'latitude': [landmark.latitude]})
+
+#	return dumps(landmark_dicts)
 
 @app.route('/pretty')
 def new_map():
